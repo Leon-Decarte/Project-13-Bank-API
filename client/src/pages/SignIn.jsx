@@ -1,30 +1,69 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '../redux/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 function SignIn() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const auth = useSelector(state => state.auth);
+    
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const result = await dispatch(loginUser({ email: username, password }));
+        if (loginUser.fulfilled.match(result)) {
+            if (rememberMe) {
+                localStorage.setItem('token', result.payload.token);
+            }
+            navigate('/user');
+        } else {
+            alert("Login failed. Please check your credentials.");
+        }
+    };
+
     return (
         <>
             <Navbar />
             <main className="main bg-dark">
-                <section className="sign-in-content">
-                    <i className="fa fa-user-circle sign-in-icon"></i>
+                <section className="login-content">
+                    <i className="fa fa-user-circle login-icon"></i>
                     <h1>Sign In</h1>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div className="input-wrapper">
                             <label htmlFor="username">Username</label>
-                            <input type="text" id="username" />
+                            <input
+                                type="text"
+                                id="username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
                         </div>
                         <div className="input-wrapper">
                             <label htmlFor="password">Password</label>
-                            <input type="password" id="password" />
+                            <input
+                                type="password"
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
                         </div>
                         <div className="input-remember">
-                            <input type="checkbox" id="remember-me" />
+                            <input
+                                type="checkbox"
+                                id="remember-me"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                            />
                             <label htmlFor="remember-me">Remember me</label>
                         </div>
-                        <Link to="/user" className="sign-in-button">Sign In</Link>
-                        {/* Remplacer par bouton + gestion auth réelle plus tard */}
+                        <button className="sign-in-button" type="submit">Sign In</button>
+                        {auth.error && <p style={{ color: 'red' }}>{auth.error}</p>}
                     </form>
                 </section>
             </main>

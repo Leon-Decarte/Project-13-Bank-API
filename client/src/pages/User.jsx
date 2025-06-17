@@ -1,14 +1,27 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AccountCard from '../components/AccountCard';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserProfile } from '../redux/authSlice';
 
 function User() {
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.auth.user);
+    const token = useSelector((state) => state.auth.token);
+
+    useEffect(() => {
+        if (token) {
+            dispatch(fetchUserProfile(token));
+        }
+    }, [dispatch, token]);
+
     return (
         <>
-            <Navbar user="Tony" />
+            <Navbar user={user?.firstName || 'User'} />
             <main className="main bg-dark">
                 <div className="header">
-                    <h1>Welcome back<br />Tony Jarvis!</h1>
+                    <h1>Welcome back<br />{user?.firstName} {user?.lastName}!</h1>
                     <button className="edit-button">Edit Name</button>
                 </div>
                 <section className="account-list">
