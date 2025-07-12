@@ -1,7 +1,17 @@
+// components/Navbar.jsx
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/authSlice';
 import logo from '../assets/argentBankLogo.png';
 
 function Navbar({ user }) {
+    const dispatch = useDispatch();
+
+    // ✅ Fonction de déconnexion
+    const handleLogout = () => {
+        dispatch(logout());
+    };
+
     return (
         <nav className="main-nav">
             <Link className="main-nav-logo" to="/">
@@ -14,7 +24,7 @@ function Navbar({ user }) {
                         <Link className="main-nav-item" to="/user">
                             <i className="fa fa-user-circle"></i> {user}
                         </Link>
-                        <Link className="main-nav-item" to="/">
+                        <Link className="main-nav-item" to="/" onClick={handleLogout}>
                             <i className="fa fa-sign-out"></i> Sign Out
                         </Link>
                     </>

@@ -9,14 +9,14 @@ function SignIn() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const auth = useSelector(state => state.auth);
-    
-    const [username, setUsername] = useState('');
+
+const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const result = await dispatch(loginUser({ email: username, password }));
+        const result = await dispatch(loginUser({ email, password }));
         if (loginUser.fulfilled.match(result)) {
             if (rememberMe) {
                 localStorage.setItem('token', result.payload.token);
@@ -36,12 +36,12 @@ function SignIn() {
                     <h1>Sign In</h1>
                     <form onSubmit={handleSubmit}>
                         <div className="input-wrapper">
-                            <label htmlFor="username">Username</label>
+                            <label htmlFor="email">email</label>
                             <input
                                 type="text"
-                                id="username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                id="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                         <div className="input-wrapper">

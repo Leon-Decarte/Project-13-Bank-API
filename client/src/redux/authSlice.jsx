@@ -1,64 +1,65 @@
+// redux/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3001/api/v1/user';
 
-export const loginUser = createAsyncThunk(
-  'auth/loginUser',
-  async ({ email, password }, thunkAPI) => {
+export const loginUser = createAsyncThunk('auth/loginUser', async ({ email, password }, thunkAPI) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, { email, password });
-      return response.data.body;
+        const response = await axios.post(`${API_URL}/login`, { email, password });
+        return response.data.body;
     } catch (error) {
-      return thunkAPI.rejectWithValue('Invalid email or password');
+        return thunkAPI.rejectWithValue('Login failed');
     }
-  }
-);
+});
 
-export const fetchUserProfile = createAsyncThunk(
-  'auth/fetchUserProfile',
-  async (token, thunkAPI) => {
+export const fetchUserProfile = createAsyncThunk('auth/fetchUserProfile', async (token, thunkAPI) => {
     try {
-      const response = await axios.post(`${API_URL}/profile`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response.data.body;
+        const response = await axios.post(`${API_URL}/profile`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data.body;
     } catch (error) {
-      return thunkAPI.rejectWithValue('Could not fetch profile');
+        return thunkAPI.rejectWithValue('Could not fetch profile');
     }
-  }
-);
+});
 
-const authSlice = createSlice({
-  name: 'auth',
-  initialState: {
+const initialState = {
     token: null,
     user: null,
     loading: false,
     error: null,
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.token = action.payload.token;
-        state.error = null;
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        state.user = action.payload;
-      });
-  },
+};
+
+const authSlice = createSlice({
+    name: 'auth',
+    initialState,
+    reducers: {
+        // ✅ NOUVEAU : déconnexion
+        logout: (state) => {
+            state.token = null;
+            state.user = null;
+            localStorage.removeItem('token');
+        },
+        // ✅ NOUVEAU : restaurer le token depuis localStorage
+        setToken: (state, action) => {
+            state.token = action.payload;
+        },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(loginUser.fulfilled, (state, action) => {
+                state.token = action.payload.token;
+                state.error = null;
+            })
+            .addCase(fetchUserProfile.fulfilled, (state, action) => {
+                state.user = action.payload;
+                state.error = null;
+            });
+    },
 });
 
+export const { logout, setToken } = authSlice.actions;
 export default authSlice.reducer;
