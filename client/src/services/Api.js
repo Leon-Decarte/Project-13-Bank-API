@@ -6,12 +6,13 @@ const API = axios.create({
 
 // Intercepteur pour injecter automatiquement le token
 API.interceptors.request.use(config => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
 });
+
 
 export default {
     login: (email, password) => API.post("/v1/user/login", { email, password }),
