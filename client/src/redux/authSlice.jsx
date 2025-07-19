@@ -1,7 +1,6 @@
 // redux/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import API from '../services/Api';
 
 const API_URL = 'http://localhost:3001/api/v1/user';
 
@@ -23,14 +22,24 @@ export const loginUser = createAsyncThunk(
 // ✅ NOUVEAU : Thunk pour récupérer le profil utilisateur
 // Il sera appelé après la connexion pour charger les données utilisateur
 
-export const fetchUserProfile = createAsyncThunk('auth/fetchUserProfile', async (_, thunkAPI) => {
-    try {
-        const response = await API.getProfile();
-        return response.data.body;
-    } catch (error) {
-        return thunkAPI.rejectWithValue('Could not fetch profile');
+export const fetchUserProfile = createAsyncThunk(
+    'auth/fetchUserProfile', // ✅ Nom de l'action
+    async (token, thunkAPI) => {
+        try {
+            // ✅ Requête POST vers /profile avec le token en Authorization
+            const response = await axios.post(`${API_URL}/profile`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data.body; 
+            // ✅ Si OK : on retourne le profil utilisateur
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Could not fetch profile');
+            // ✅ Si erreur : on rejette avec un message d'erreur
+        }
     }
-});
+);
 
 // ✅ NOUVEAU : Thunk pour mettre à jour le profil utilisateur
 // Il sera appelé lors de la modification du nom ou prénom dans le profil
@@ -80,8 +89,6 @@ const authSlice = createSlice({
             .addCase(loginUser.fulfilled, (state, action) => {
                 state.token = action.payload.token; // ✅ Le token retourné par la réponse backend
                 state.error = null;                 // ✅ On reset l'erreur au cas où
-                localStorage.setItem('token', action.payload.token); // ✅ Ajoute-le bien ici
-
             })
             // ✅ Quand la récupération du profil réussit : on stocke le user dans le state
             .addCase(fetchUserProfile.fulfilled, (state, action) => {
@@ -89,10 +96,12 @@ const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(updateUserProfile.fulfilled, (state, action) => {
-                state.user = action.payload;  // 🔥 Met à jour les infos utilisateur
-                state.error = null;
-            });
-        },
+            state.user = action.payload;  // 🔥 Met à jour les infos utilisateur
+            state.error = null;
+})
+;
+            
+    },
 });
 
 
