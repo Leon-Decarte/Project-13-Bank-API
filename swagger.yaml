@@ -1,3 +1,6 @@
+  # --- Tes endpoints User ---
+
+
 swagger: '2.0'
 info:
   title: Bank Argent API documentation
@@ -163,4 +166,121 @@ definitions:
       firstName:
         type: string
       lastName:
+        type: string
+
+
+
+  # --- Tes endpoints Transactions ---
+
+paths:
+  /transactions:
+    get:
+      tags:
+        - Transactions
+      summary: Récupère toutes les transactions de l'utilisateur pour le mois en cours
+      description: Retourne une liste de transactions groupées par compte
+      parameters:
+        - in: header
+          name: Authorization
+          description: Token JWT de l'utilisateur
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Liste des transactions récupérée avec succès
+        '401':
+          description: Non autorisé
+    post:
+      tags:
+        - Transactions
+      summary: Crée une nouvelle transaction
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Transaction'
+      responses:
+        '201':
+          description: Transaction créée
+        '400':
+          description: Requête invalide
+  /transactions/{transactionId}:
+    get:
+      tags:
+        - Transactions
+      summary: Détail d'une transaction
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          type: string
+        - in: path
+          name: transactionId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Détails de la transaction
+        '404':
+          description: Transaction non trouvée
+    put:
+      tags:
+        - Transactions
+      summary: Met à jour une transaction
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          type: string
+        - in: path
+          name: transactionId
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Transaction'
+      responses:
+        '200':
+          description: Transaction mise à jour
+        '400':
+          description: Mauvaise requête
+    delete:
+      tags:
+        - Transactions
+      summary: Supprime une transaction
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          type: string
+        - in: path
+          name: transactionId
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Supprimé avec succès
+        '404':
+          description: Transaction non trouvée
+definitions:
+  Transaction:
+    type: object
+    properties:
+      amount:
+        type: number
+      date:
+        type: string
+        format: date
+      description:
+        type: string
+      category:
+        type: string
+      accountId:
         type: string
