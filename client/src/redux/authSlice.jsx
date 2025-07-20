@@ -96,10 +96,9 @@ const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(updateUserProfile.fulfilled, (state, action) => {
-            state.user = action.payload;  // 🔥 Met à jour les infos utilisateur
-            state.error = null;
-})
-;
+                state.user = action.payload;  // 🔥 Met à jour les infos utilisateur
+                state.error = null;
+});
             
     },
 });
