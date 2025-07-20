@@ -259,33 +259,76 @@ body {
   padding: 10px;
 }
 
+/* HEADER ZONE */
 .header {
   color: #fff;
+  text-align: center;
   margin-bottom: 2rem;
 }
 
-.transaction-button {
-  display: block;
-  width: 100%;
-  padding: 8px;
-  font-size: 1.1rem;
+.header h1 {
   font-weight: bold;
-  margin-top: 1rem;
-  border-color: #00bc77;
-  background-color: #00bc77;
-  color: #fff;
+  margin-bottom: 1rem;
 }
 
-@media (min-width: 720px) {
-  .account {
-    flex-direction: row;
-  }
+/* Edit Button */
+.edit-button {
+  background-color: white;
+  color: #00bc77;
+  border: 1px solid #00bc77;
+  padding: 8px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
-  .account-content-wrapper.cta {
-    flex: 0;
-  }
+.edit-button:hover {
+  background-color: #00bc77;
+  color: white;
+}
 
-  .transaction-button {
-    width: 200px;
-  }
+/* Edit Form */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.edit-form input {
+  padding: 5px 10px;
+  font-size: 1rem;
+  width: 200px;
+}
+
+.edit-form button {
+  background-color: #635bff;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.edit-form button:hover {
+  opacity: 0.9;
+}
+
+/* Second Button (Cancel) Style */
+.edit-form button:nth-child(4) {
+  background-color: white;
+  color: #635bff;
+  border: 1px solid #635bff;
+}
+
+/* ACCOUNT LIST */
+.account-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 90%;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-bottom: 2rem;
 }
